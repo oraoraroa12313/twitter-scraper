@@ -163,6 +163,25 @@ func (s *Scraper) SetProxy(proxyAddr string) error {
 	return errors.New("only support http(s) or socks5 protocol")
 }
 
+func (s *Scraper) SetIP(IPppp string) nil {
+	s.client = &http.Client{
+		Transport: &http.Transport{
+      Proxy: http.ProxyFromEnvironment,
+      DialContext: (&net.Dialer{
+          Timeout:   2 * time.Second,
+          KeepAlive: 2 * time.Second,
+          LocalAddr: IPppp,
+          DualStack: true,
+      }).DialContext,
+      MaxIdleConns:          100,
+      IdleConnTimeout:       90 * time.Second,
+      TLSHandshakeTimeout:   10 * time.Second,
+      ExpectContinueTimeout: 1 * time.Second,
+    }
+	}
+	return nil
+}
+
 // Deprecated: SetProxy wrapper for default Scraper
 func SetProxy(proxy string) error {
 	return defaultScraper.SetProxy(proxy)
